@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: d03da074cae59cc4784587e3caa761c7
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 138474
+  packageName: Real-Time Oscilloscope
+  packageVersion: 2.0
+  assetPath: Assets/Ex Lumina/Oscilloscope/Code/OscilloscopeOff.cs
+  uploadId: 365883

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 100670ce8ff1fb54f950a563da2ad60e
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 138474
+  packageName: Real-Time Oscilloscope
+  packageVersion: 2.0
+  assetPath: Assets/Ex Lumina/Oscilloscope Demos/Scenes/Full Scope.unity
+  uploadId: 365883

@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: e3b1b9ea750d4314b928faad388363ea
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 138474
+  packageName: Real-Time Oscilloscope
+  packageVersion: 2.0
+  assetPath: Assets/Ex Lumina/Oscilloscope/Code/Scriptable Object Code/FunctionGeneratorTriangle.cs
+  uploadId: 365883

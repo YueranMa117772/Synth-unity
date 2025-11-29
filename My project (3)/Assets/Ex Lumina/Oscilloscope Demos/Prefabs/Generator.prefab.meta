@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: beed899bc0be5e048b2e00f33fa2dd96
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 138474
+  packageName: Real-Time Oscilloscope
+  packageVersion: 2.0
+  assetPath: Assets/Ex Lumina/Oscilloscope Demos/Prefabs/Generator.prefab
+  uploadId: 365883

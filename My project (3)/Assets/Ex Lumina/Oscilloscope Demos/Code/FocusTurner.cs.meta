@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 92b852d87aec2eb429183d67a6e3bf33
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 138474
+  packageName: Real-Time Oscilloscope
+  packageVersion: 2.0
+  assetPath: Assets/Ex Lumina/Oscilloscope Demos/Code/FocusTurner.cs
+  uploadId: 365883

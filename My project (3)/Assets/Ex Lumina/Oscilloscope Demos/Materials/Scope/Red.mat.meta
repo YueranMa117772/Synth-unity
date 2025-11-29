@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6f39ef13142cbba439d55894c7b5704f
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 138474
+  packageName: Real-Time Oscilloscope
+  packageVersion: 2.0
+  assetPath: Assets/Ex Lumina/Oscilloscope Demos/Materials/Scope/Red.mat
+  uploadId: 365883

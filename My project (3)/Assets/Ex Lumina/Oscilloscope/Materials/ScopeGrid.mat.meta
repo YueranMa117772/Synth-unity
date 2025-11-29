@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7548b5cfddcc51847b567e3e364dc0c2
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 138474
+  packageName: Real-Time Oscilloscope
+  packageVersion: 2.0
+  assetPath: Assets/Ex Lumina/Oscilloscope/Materials/ScopeGrid.mat
+  uploadId: 365883

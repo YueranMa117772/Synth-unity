@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0b8f63c972b0c774e94f48b7757c4051
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 138474
+  packageName: Real-Time Oscilloscope
+  packageVersion: 2.0
+  assetPath: Assets/Ex Lumina/Oscilloscope Demos/Materials/Scope/White.mat
+  uploadId: 365883

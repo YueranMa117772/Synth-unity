@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7b2d417ae467b01458224a236b6a9243
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 138474
+  packageName: Real-Time Oscilloscope
+  packageVersion: 2.0
+  assetPath: Assets/Ex Lumina/Oscilloscope Demos/Materials/Squares/Off.mat
+  uploadId: 365883

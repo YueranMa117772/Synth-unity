@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c3ffd0e851ae8944b957f389320285ac
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 138474
+  packageName: Real-Time Oscilloscope
+  packageVersion: 2.0
+  assetPath: Assets/Ex Lumina/Oscilloscope Demos/Materials/Bench/Wood.mat
+  uploadId: 365883

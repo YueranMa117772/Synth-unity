@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 12ecc52df4e958c40af044d3dbdf02e0
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 138474
+  packageName: Real-Time Oscilloscope
+  packageVersion: 2.0
+  assetPath: Assets/Ex Lumina/Oscilloscope Demos/Scenes/Workbench.unity
+  uploadId: 365883

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a496a0fb5dbfd2449b7bbb307b236198
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 138474
+  packageName: Real-Time Oscilloscope
+  packageVersion: 2.0
+  assetPath: Assets/Ex Lumina/Oscilloscope Demos/Materials/Arrows/Blue.mat
+  uploadId: 365883

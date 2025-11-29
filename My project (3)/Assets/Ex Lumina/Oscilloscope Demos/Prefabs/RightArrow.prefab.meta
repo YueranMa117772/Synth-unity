@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 0488b8e325c9d474fb43e9f4d480e7a6
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 138474
+  packageName: Real-Time Oscilloscope
+  packageVersion: 2.0
+  assetPath: Assets/Ex Lumina/Oscilloscope Demos/Prefabs/RightArrow.prefab
+  uploadId: 365883

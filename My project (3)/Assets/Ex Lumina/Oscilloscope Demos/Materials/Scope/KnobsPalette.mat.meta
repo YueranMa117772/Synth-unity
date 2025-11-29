@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 93bee274be55f2f46a23456a14413ce3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 138474
+  packageName: Real-Time Oscilloscope
+  packageVersion: 2.0
+  assetPath: Assets/Ex Lumina/Oscilloscope Demos/Materials/Scope/KnobsPalette.mat
+  uploadId: 365883
