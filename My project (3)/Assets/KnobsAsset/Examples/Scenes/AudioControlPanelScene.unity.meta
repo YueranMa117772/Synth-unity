@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 9fc0d4010bbf28b4594072e72b8655ab
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 152321
+  packageName: 3D Interactive Knobs, Sliders and Buttons
+  packageVersion: 1.1
+  assetPath: Assets/KnobsAsset/Examples/Scenes/AudioControlPanelScene.unity
+  uploadId: 342996

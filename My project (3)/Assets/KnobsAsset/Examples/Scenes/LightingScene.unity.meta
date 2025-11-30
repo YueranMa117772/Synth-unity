@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 49fa87caffd85cb4780ff7f3fdb48a0b
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 152321
+  packageName: 3D Interactive Knobs, Sliders and Buttons
+  packageVersion: 1.1
+  assetPath: Assets/KnobsAsset/Examples/Scenes/LightingScene.unity
+  uploadId: 342996

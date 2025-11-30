@@ -61,6 +61,10 @@
         [Tooltip("A subsclass of FunctionGenerator")]
         public FunctionGenerator generator;
 
+        // ★ 新增：用滑块选择的波形列表（按顺序放 Sine / Triangle / Curve 等）
+        [Tooltip("Waveforms to select via slider (0..1 maps across this array)")]
+        public FunctionGenerator[] sliderWaveforms;
+
         [Tooltip("Frequency of the input signal")]
         public float generatorFrequency = 1;
         [Tooltip("Multiplies the signal level by this value")]
@@ -129,9 +133,6 @@
 
         float phaseAngleCopy;
 
-        // 本地时间：用它代替 Time.time，这样暂停时不会“跳帧”
-        float scopeTime;
-
         bool useLastTrace;
         bool thereIsALastTrace = false;
 
@@ -160,10 +161,6 @@
         Coroutine lowerTheCurtain;
 
         bool scopeIsOn;
-
-        // 暂停标志：为 true 时动画停在当前帧
-        [Tooltip("Pause the oscilloscope animation without turning it off")]
-        public bool pauseAnimation = false;
 
         // Sweep time in seconds per division an sweep frequency are
         // linked. A perfect place to use properties instead of fields.
@@ -394,9 +391,6 @@
 
             scopeIsOn = false;
 
-            // 关机时顺便取消暂停状态
-            pauseAnimation = false;
-
             StopCoroutines();
 
             lowerTheCurtain = StartCoroutine(LowerTheCurtain());
@@ -409,6 +403,37 @@
             if (scopeIsOn)
             {
                 On();
+            }
+        }
+
+        // ★ 新增：给滑块调用，用 0~1 的值选择一个波形 ScriptableObject
+        public void SetWaveformFromSlider(float t)
+        {
+            if (sliderWaveforms == null || sliderWaveforms.Length == 0)
+            {
+                return;
+            }
+
+            t = Mathf.Clamp01(t);
+
+            // 把 0~1 映射到 0..(N-1) 的索引（配合滑块的“卡位”，通常是正好几个固定值）
+            int lastIndex = sliderWaveforms.Length - 1;
+            int index = Mathf.RoundToInt(t * lastIndex);
+            if (index < 0) index = 0;
+            if (index > lastIndex) index = lastIndex;
+
+            var newGen = sliderWaveforms[index];
+            if (newGen == null || newGen == generator)
+            {
+                return; // 没有变化就不重算
+            }
+
+            generator = newGen;
+
+            // 如果示波器当前是开着的，用新的波形重画一条 trace
+            if (scopeIsOn)
+            {
+                On(false);
             }
         }
 
@@ -444,9 +469,6 @@
             StopCoroutines();
 
             isPhaseLocked = false;
-
-            // 每次开始新的 trace 时，重置本地时间
-            scopeTime = 0f;
 
             if (secondsPerSweep < flickerTime)
             {
@@ -505,19 +527,9 @@
 
             while (true)
             {
-                // 暂停：不更新时间、不更新画面
-                if (pauseAnimation)
-                {
-                    yield return null;
-                    continue;
-                }
-
-                // 只有没暂停时才推进本地时间
-                scopeTime += Time.deltaTime;
-
                 if (!forcePhaseLock)
                 {
-                    int sNew = 1 + (int)(scopeTime / secondsPerSweep);
+                    int sNew = 1 + (int)(Time.time / secondsPerSweep);
 
                     if (sweepCount != sNew)
                     {
@@ -525,7 +537,7 @@
 
                         phiMoving = phiFixed;
                         phiFixed = 0.5f * ((sweepCount * secondsPerSweep) % (1.0f / generatorFrequencyCopy))
-                                        / secondsPerSweep;
+                                        / secondsPerSweep; // (1.0f / generatorFrequency);
 
                         fixedQuadOffset.x = phiFixed;
                         fixedQuadMaterial.mainTextureOffset = fixedQuadOffset;
@@ -534,7 +546,7 @@
 
                 // Figure horzontal beam location on [0, 1).
 
-                float xSweep = (scopeTime % secondsPerSweep) / secondsPerSweep;
+                float xSweep = (Time.time % secondsPerSweep) / secondsPerSweep;
 
                 movingQuadScale.x = 1f - xSweep;
                 movingQuadTransform.localScale = movingQuadScale;
@@ -552,7 +564,7 @@
             }
         }
 
-        // Trace too fast to show fade, but animate phase drift.
+        // Trace to fast to show fade, but animate phase drift.
 
         IEnumerator PhaseDriftQuad()
         {
@@ -560,19 +572,7 @@
 
             while (true)
             {
-                if (pauseAnimation)
-                {
-                    yield return null;
-                    continue;
-                }
-
-                // 同样用本地时间推进
-                scopeTime += Time.deltaTime;
-
-                // 去掉 sweep 内的小数部分，相当于取到“当前 sweep 的起点”
-                float tWithoutFraction = scopeTime - (scopeTime % secondsPerSweep);
-
-                phiMoving = (tWithoutFraction % (1f / generatorFrequencyCopy)) / secondsPerSweep;
+                phiMoving = ((Time.time - (Time.time % secondsPerSweep)) % (1f / generatorFrequencyCopy)) / secondsPerSweep;
 
                 movingQuadOffset.x = 0.5f * phiMoving;
                 movingQuadMaterial.mainTextureOffset = movingQuadOffset;
@@ -624,32 +624,6 @@
 
             movingQuadTiling.x = 0.5f;
             movingQuadMaterial.mainTextureScale = movingQuadTiling;
-        }
-
-        // ===== 外部控制接口：给 InteractableGeneral / UI 按钮调用 =====
-
-        // 切换暂停/恢复
-        public void TogglePause()
-        {
-            pauseAnimation = !pauseAnimation;
-        }
-
-        // 强制暂停
-        public void Pause()
-        {
-            pauseAnimation = true;
-        }
-
-        // 强制恢复
-        public void Resume()
-        {
-            pauseAnimation = false;
-        }
-
-        // 直接设置暂停状态（适合 UI Toggle）
-        public void SetPause(bool value)
-        {
-            pauseAnimation = value;
         }
 
         // Coroutines are not separate threads. Stopping them here just

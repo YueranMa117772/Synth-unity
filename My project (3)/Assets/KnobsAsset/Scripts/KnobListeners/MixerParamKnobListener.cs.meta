@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 5652503ef63819141a42470d1bae70b0
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 152321
+  packageName: 3D Interactive Knobs, Sliders and Buttons
+  packageVersion: 1.1
+  assetPath: Assets/KnobsAsset/Scripts/KnobListeners/MixerParamKnobListener.cs
+  uploadId: 342996

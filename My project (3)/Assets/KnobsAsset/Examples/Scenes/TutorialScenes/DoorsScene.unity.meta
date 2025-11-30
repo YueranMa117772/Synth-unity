@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d6b1f11efb314eb4c895a73cf3ce3999
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 152321
+  packageName: 3D Interactive Knobs, Sliders and Buttons
+  packageVersion: 1.1
+  assetPath: Assets/KnobsAsset/Examples/Scenes/TutorialScenes/DoorsScene.unity
+  uploadId: 342996

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 16276c4a5c90d294d9e535cc5579909b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 152321
+  packageName: 3D Interactive Knobs, Sliders and Buttons
+  packageVersion: 1.1
+  assetPath: Assets/KnobsAsset/Examples/Materials/Yellow.mat
+  uploadId: 342996

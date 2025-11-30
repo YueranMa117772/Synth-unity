@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9d00d37860d0fc640a13aaf7b7c7f4c0
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 152321
+  packageName: 3D Interactive Knobs, Sliders and Buttons
+  packageVersion: 1.1
+  assetPath: Assets/KnobsAsset/Materials/ButtonGlossyTextured.mat
+  uploadId: 342996

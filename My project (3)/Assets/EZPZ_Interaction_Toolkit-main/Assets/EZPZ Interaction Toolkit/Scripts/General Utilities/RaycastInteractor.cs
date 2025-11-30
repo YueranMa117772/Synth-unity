@@ -1,4 +1,4 @@
-//EZPZ Interaction Toolkit
+﻿//EZPZ Interaction Toolkit
 //by Matt Cabanag
 //created 8 Apr 2022
 
@@ -12,6 +12,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using KnobsAsset;   // ★ 新增：为了使用 SliderKnob
 
 public class RaycastInteractor : MonoBehaviour
 {
@@ -293,6 +294,14 @@ public class RaycastInteractor : MonoBehaviour
             }
 
             HandleInteractables(hit);
+
+            // ★ 新增：滑块拖动逻辑
+            SliderKnob slider = hit.collider.GetComponentInParent<SliderKnob>();
+            if (slider != null && slider.IsGrabbed)
+            {
+                slider.UpdateGrabPosition(hit.point);
+            }
+
             HandleUnityButton(hit);
         }
         else

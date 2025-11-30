@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 9807f419b34f2534c9c3a2037f40e974
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 152321
+  packageName: 3D Interactive Knobs, Sliders and Buttons
+  packageVersion: 1.1
+  assetPath: Assets/KnobsAsset/Prefabs/VertialDragKnob.prefab
+  uploadId: 342996
