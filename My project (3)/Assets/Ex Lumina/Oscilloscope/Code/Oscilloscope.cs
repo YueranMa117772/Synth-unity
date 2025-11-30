@@ -7,21 +7,11 @@
 
     public class Oscilloscope : MonoBehaviour
     {
-        // Below this frame time, draw a solid trace, not animated.
-
         const float flickerTime = 1f / 25f;
-
-        // "Off" intensity.
-
         const byte noGlow = 0x22;
-
-        // Grid dimensions.
 
         const int numberVerticalDivs = 8;
         const int numberHorizontalDivs = 10;
-
-        // These are the parameters most likely to be something the
-        // user or client code will want to change.
 
         [Space(10, order = 0)]
         [Header("Change these parameters to suit your project.", order = 1)]
@@ -34,8 +24,6 @@
         public Color traceColor = new Color(0, 1, 0, 1);
         [Tooltip("Dark phosphor color")]
         public Color screenColor = new Color(0, noGlow / 255f, 0, 1);
-
-        // Time in seconds for the screen fade out when going off.
 
         [Tooltip("Seconds to fade out on power off")]
         public float fadeOutTime = 0.5f;
@@ -56,12 +44,10 @@
         [Tooltip("Volts per grid division")]
         public float voltsPerDiv = .25f;
 
-        // A ScriptableObject subclassed from FunctionGenerator.
-
         [Tooltip("A subsclass of FunctionGenerator")]
         public FunctionGenerator generator;
 
-        // ★ 新增：用滑块选择的波形列表（按顺序放 Sine / Triangle / Curve 等）
+        // 滑块选择的波形列表
         [Tooltip("Waveforms to select via slider (0..1 maps across this array)")]
         public FunctionGenerator[] sliderWaveforms;
 
@@ -69,9 +55,6 @@
         public float generatorFrequency = 1;
         [Tooltip("Multiplies the signal level by this value")]
         public float generatorAmplitude = 1;
-
-        // "Locked" means always starting at the same point in the
-        // signal.
 
         [Tooltip("True = trace does not drift")]
         public bool alwaysPhaseLock = false;
@@ -82,18 +65,11 @@
         [Header("Change these if necessary (unlikely).", order = 1)]
         [Space(10, order = 2)]
 
-        // Phosphor fade rate, as an exponent.
-
         [Tooltip("Phosphor persistence")]
         public float rollOff = 2;
 
-        // Sweep time above this always phase locks.
-
         [Tooltip("Longer sweeps than this will not drift")]
         public float lockSweepSeconds = 60;
-
-        // These are just for making it easy to find the prefabs
-        // internal GameObjects.
 
         [Space(10, order = 0)]
         [Header("Do not change these settings.", order = 1)]
@@ -162,39 +138,25 @@
 
         bool scopeIsOn;
 
-        // Sweep time in seconds per division an sweep frequency are
-        // linked. A perfect place to use properties instead of fields.
+        // ★ 新增：暂停状态 + 自己的时间轴
+        bool isPaused = false;
+        float sweepClock = 0f;
 
         public float SecondsPerDiv
         {
             get => 1f / (numberHorizontalDivs * sweepFrequency);
-
-            set
-            {
-                sweepFrequency = 1f / (numberHorizontalDivs * value);
-            }
+            set => sweepFrequency = 1f / (numberHorizontalDivs * value);
         }
 
         public float SweepFrequency
         {
             get => sweepFrequency;
-
-            set
-            {
-                sweepFrequency = value;
-            }
+            set => sweepFrequency = value;
         }
 
         void Start()
         {
-            // Keep a pointer to the grid quad's own material so we can
-            // turn the scope on and off.
-
             gridMaterial = gridGO.GetComponent<Renderer>().material;
-
-            // Pull out pointers to the transforms and offsets we will
-            // use for animation, as well as the Vector3 and Vector2
-            // structures we need to use to update those transforms.
 
             movingQuadTransform = movingGO.transform;
             movingQuadScale = movingQuadTransform.localScale;
@@ -209,15 +171,9 @@
             fadeQuadMaterial = faderGO.GetComponent<Renderer>().material;
             fadeQuadOffset = fadeQuadMaterial.mainTextureOffset;
 
-            // Make the outer edge and curtain meshes use the screen color.
-
             outerGO.GetComponent<Renderer>().material.color = screenColor;
             curtainQuadMaterial = curtainGO.GetComponent<Renderer>().material;
-            curtainQuadMaterial.color = screenColor; // Color.black;
-                                                     //curtainQuadMaterial.SetColor("_EmissionColor", screenColor);
-
-            // Swap in a texture we create now so changes will not appear
-            // to be persistent if we are in edit mode.
+            curtainQuadMaterial.color = screenColor;
 
             fixedQuadMaterial.mainTexture = new Texture2D(
                 textureSize * 2,
@@ -227,19 +183,11 @@
 
             movingQuadMaterial.mainTexture = fixedQuadMaterial.mainTexture;
 
-            // Make a texture to use as a working buffer so we can clear
-            // it and draw the new trace, taking as long as necessary, while
-            // leaving the existing trace in place. When we're done drawing
-            // the new one, we'll copy it in with a single API call.
-
             workingBuffer = new Texture2D(
                 textureSize * 2,
                 textureSize,
                 TextureFormat.RGBA32,
                 true);
-
-            // Make a blank Texture2D in the background color so we can
-            // clear the working buffer with a single API call.
 
             blankScreen = new Texture2D(
                 textureSize * 2,
@@ -260,9 +208,7 @@
                 pixels[pixelIndex] = fillColor;
             }
 
-            blankScreen.Apply(); // This does not appear to be needed. How come?
-
-            // Create the fade texture.
+            blankScreen.Apply();
 
             phosphorFadeTexture = new Texture2D(
                 textureSize,
@@ -272,16 +218,12 @@
 
             fadeQuadMaterial.mainTexture = phosphorFadeTexture;
 
-            // Set the fade texture to the screen color now too.
-
             pixels = phosphorFadeTexture.GetRawTextureData<uint>();
 
             for (int col = 0; col < phosphorFadeTexture.width; ++col)
             {
                 float alpha = 1f - (float)col / (phosphorFadeTexture.width - 1);
-
                 alpha = Mathf.Pow(alpha, rollOff);
-
                 uint alphaUint = (uint)Mathf.RoundToInt(255 * alpha) << 24;
 
                 for (int row = 0; row < phosphorFadeTexture.height; ++row)
@@ -293,14 +235,7 @@
 
             phosphorFadeTexture.Apply();
 
-            // Let the user pick slow-enough-to-lock in seconds, convert here to
-            // a rate.
-
             lockSweepRate = 1f / lockSweepSeconds;
-
-            // As Trace is a static class, there is no instance to construct and no
-            // constructor. Perhaps there should be an instance and we should be
-            // passing pixels, width, and height to a constructor?
 
             Trace.width = textureSize * 2;
             Trace.height = textureSize;
@@ -331,34 +266,22 @@
                 }
                 else
                 {
-
                     thereIsALastTrace = true;
 
                     secondsPerSweep = 1f / sweepFrequency;
-
-                    // Make a defensive copy so the trace animators can use
-                    // it without being affected by changes in the public
-                    // generator frequency.
+                    sweepClock = 0f;              // 新 trace 从 0 开始
 
                     generatorFrequencyCopy = generatorFrequency;
                     phaseAngleCopy = phaseAngle;
                     generator.Frequency = generatorFrequency;
                     generator.Amplitude = generatorAmplitude * 2 / (numberVerticalDivs * voltsPerDiv);
 
-                    // Wipe the working buffer clean. (Must call this from main thread.)
-
                     Graphics.CopyTexture(blankScreen, workingBuffer);
-
-                    // Send a parameter object to the blocked drawing thread, so
-                    // it can start creating the trace.
 
                     Trace.traceInput.Add(new TraceParams
                     {
                         traceNum = traceNum,
                         f = generator,
-
-                        // Must call this from main thread.
-
                         pixels = workingBuffer.GetRawTextureData<byte>(),
                         secondsPerSweep = secondsPerSweep,
                         beamWidth = beamWidth,
@@ -368,9 +291,6 @@
                         screenColor = screenColor
                     });
                 }
-
-                // Start coroutine that will use the finished trace after
-                // it has been drawn by another thread.
 
                 StartCoroutine(WaitForTrace(traceNum));
 
@@ -384,12 +304,13 @@
 
         public void Off()
         {
-            if (scopeIsOn == false)
+            if (!scopeIsOn)
             {
                 return;
             }
 
             scopeIsOn = false;
+            isPaused = false;
 
             StopCoroutines();
 
@@ -406,7 +327,7 @@
             }
         }
 
-        // ★ 新增：给滑块调用，用 0~1 的值选择一个波形 ScriptableObject
+        // 滑块切波形
         public void SetWaveformFromSlider(float t)
         {
             if (sliderWaveforms == null || sliderWaveforms.Length == 0)
@@ -416,7 +337,6 @@
 
             t = Mathf.Clamp01(t);
 
-            // 把 0~1 映射到 0..(N-1) 的索引（配合滑块的“卡位”，通常是正好几个固定值）
             int lastIndex = sliderWaveforms.Length - 1;
             int index = Mathf.RoundToInt(t * lastIndex);
             if (index < 0) index = 0;
@@ -425,23 +345,31 @@
             var newGen = sliderWaveforms[index];
             if (newGen == null || newGen == generator)
             {
-                return; // 没有变化就不重算
+                return;
             }
 
             generator = newGen;
 
-            // 如果示波器当前是开着的，用新的波形重画一条 trace
             if (scopeIsOn)
             {
                 On(false);
             }
         }
 
+        // ★ 暂停 / 恢复：只控制 isPaused，不停协程
+        public void TogglePause()
+        {
+            if (!scopeIsOn)
+            {
+                return;
+            }
+
+            isPaused = !isPaused;
+        }
+
         IEnumerator WaitForTrace(int traceNum)
         {
             IntBox traceReady;
-
-            // TODO: use a "yield return until" here.
 
             while (!Trace.traceOutput.TryTake(out traceReady))
             {
@@ -451,51 +379,21 @@
             workingBuffer.Apply();
             Graphics.CopyTexture(workingBuffer, fixedQuadMaterial.mainTexture);
 
-            // Raise the curtain.
-
             curtainQuadMaterial.color = Color.clear;
-
-            // Figure the phase drift, if any.
 
             phiMoving = 0;
             phiFixed = 0.5f * (secondsPerSweep % (1.0f / generatorFrequencyCopy))
-                            / secondsPerSweep; // (1.0f / generatorFrequency);
+                            / secondsPerSweep;
 
             fixedQuadOffset.x = phiFixed;
             fixedQuadMaterial.mainTextureOffset = fixedQuadOffset;
 
-            sweepCount = 1;
-
             StopCoroutines();
-
             isPhaseLocked = false;
 
-            if (secondsPerSweep < flickerTime)
+            if (!isPaused)
             {
-                // Is it drifting slow enough to regard as locked?
-
-                float cyclesPerSweep = secondsPerSweep * generatorFrequencyCopy;
-
-                float partialCyclesPerSweep = Mathf.Abs(Mathf.Round(cyclesPerSweep) - cyclesPerSweep);
-
-                float partialSweepsPerSweep = partialCyclesPerSweep / cyclesPerSweep;
-
-                float driftSweepsPerSecond = partialSweepsPerSweep / secondsPerSweep;
-
-                if (alwaysPhaseLock || driftSweepsPerSecond <= lockSweepRate)
-                {
-                    isPhaseLocked = true;
-
-                    PhaseLockQuad();
-                }
-                else
-                {
-                    phaseDriftQuad = StartCoroutine(PhaseDriftQuad());
-                }
-            }
-            else
-            {
-                fadingTrace = StartCoroutine(FadingTrace(alwaysPhaseLock));
+                StartAnimationCoroutines();
             }
 
             scopeIsOn = true;
@@ -508,8 +406,35 @@
             }
         }
 
-        // Draw the trace with fading phosphor.
+        // ★ 抽出来的协程启动逻辑
+        void StartAnimationCoroutines()
+        {
+            sweepCount = 1;
 
+            if (secondsPerSweep < flickerTime)
+            {
+                float cyclesPerSweep = secondsPerSweep * generatorFrequencyCopy;
+                float partialCyclesPerSweep = Mathf.Abs(Mathf.Round(cyclesPerSweep) - cyclesPerSweep);
+                float partialSweepsPerSweep = partialCyclesPerSweep / cyclesPerSweep;
+                float driftSweepsPerSecond = partialSweepsPerSweep / secondsPerSweep;
+
+                if (alwaysPhaseLock || driftSweepsPerSecond <= lockSweepRate)
+                {
+                    isPhaseLocked = true;
+                    PhaseLockQuad();
+                }
+                else
+                {
+                    phaseDriftQuad = StartCoroutine(PhaseDriftQuad());
+                }
+            }
+            else
+            {
+                fadingTrace = StartCoroutine(FadingTrace(alwaysPhaseLock));
+            }
+        }
+
+        // 带余辉动画的 trace
         IEnumerator FadingTrace(bool forcePhaseLock)
         {
             faderGO.SetActive(true);
@@ -527,9 +452,15 @@
 
             while (true)
             {
+                if (isPaused)
+                {
+                    yield return null;
+                    continue;
+                }
+
                 if (!forcePhaseLock)
                 {
-                    int sNew = 1 + (int)(Time.time / secondsPerSweep);
+                    int sNew = 1 + (int)(sweepClock / secondsPerSweep);
 
                     if (sweepCount != sNew)
                     {
@@ -537,16 +468,14 @@
 
                         phiMoving = phiFixed;
                         phiFixed = 0.5f * ((sweepCount * secondsPerSweep) % (1.0f / generatorFrequencyCopy))
-                                        / secondsPerSweep; // (1.0f / generatorFrequency);
+                                        / secondsPerSweep;
 
                         fixedQuadOffset.x = phiFixed;
                         fixedQuadMaterial.mainTextureOffset = fixedQuadOffset;
                     }
                 }
 
-                // Figure horzontal beam location on [0, 1).
-
-                float xSweep = (Time.time % secondsPerSweep) / secondsPerSweep;
+                float xSweep = (sweepClock % secondsPerSweep) / secondsPerSweep;
 
                 movingQuadScale.x = 1f - xSweep;
                 movingQuadTransform.localScale = movingQuadScale;
@@ -557,22 +486,31 @@
                 movingQuadTiling.x = (1f - xSweep) / 2f;
                 movingQuadMaterial.mainTextureScale = movingQuadTiling;
 
-                fadeQuadOffset.x = 1f - xSweep + .001f; // a bit leaks out
+                fadeQuadOffset.x = 1f - xSweep + .001f;
                 fadeQuadMaterial.mainTextureOffset = fadeQuadOffset;
+
+                sweepClock += Time.deltaTime;
 
                 yield return null;
             }
         }
 
-        // Trace to fast to show fade, but animate phase drift.
-
+        // 只做相位漂移的 trace（没有显著余辉）
         IEnumerator PhaseDriftQuad()
         {
             PhaseLockQuad();
 
             while (true)
             {
-                phiMoving = ((Time.time - (Time.time % secondsPerSweep)) % (1f / generatorFrequencyCopy)) / secondsPerSweep;
+                if (isPaused)
+                {
+                    yield return null;
+                    continue;
+                }
+
+                sweepClock += Time.deltaTime;
+
+                phiMoving = ((sweepClock - (sweepClock % secondsPerSweep)) % (1f / generatorFrequencyCopy)) / secondsPerSweep;
 
                 movingQuadOffset.x = 0.5f * phiMoving;
                 movingQuadMaterial.mainTextureOffset = movingQuadOffset;
@@ -580,8 +518,6 @@
                 yield return null;
             }
         }
-
-        // Fade out the image on power off.
 
         IEnumerator LowerTheCurtain()
         {
@@ -607,8 +543,6 @@
             lowerTheCurtain = null;
         }
 
-        // No fade or drift, so just draw the trace once.
-
         void PhaseLockQuad()
         {
             faderGO.SetActive(false);
@@ -625,10 +559,6 @@
             movingQuadTiling.x = 0.5f;
             movingQuadMaterial.mainTextureScale = movingQuadTiling;
         }
-
-        // Coroutines are not separate threads. Stopping them here just
-        // means they are removed from the running list. This happens
-        // when they have all yielded.
 
         void StopCoroutines()
         {
