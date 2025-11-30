@@ -138,7 +138,7 @@
 
         bool scopeIsOn;
 
-        // ★ 新增：暂停状态 + 自己的时间轴
+        // ★ 暂停状态 + 自己的时间轴
         bool isPaused = false;
         float sweepClock = 0f;
 
@@ -243,6 +243,9 @@
             Off();
 
             new Thread(Trace.Run).Start();
+
+            // ★ 启动时默认处于暂停状态
+            isPaused = true;
 
             if (isOnAtStart)
             {
@@ -356,7 +359,7 @@
             }
         }
 
-        // ★ 暂停 / 恢复：只控制 isPaused，不停协程
+        // ★ 暂停 / 恢复：只控制 isPaused，如果协程被停掉则在恢复时重新启动
         public void TogglePause()
         {
             if (!scopeIsOn)
@@ -364,7 +367,18 @@
                 return;
             }
 
+            bool wasPaused = isPaused;
             isPaused = !isPaused;
+
+            // 从“暂停”切回“运行”
+            if (wasPaused && !isPaused)
+            {
+                // 如果动画协程在暂停期间被 StopCoroutines() 清掉了（例如暂停时切换了波形）
+                if (fadingTrace == null && phaseDriftQuad == null)
+                {
+                    StartAnimationCoroutines();
+                }
+            }
         }
 
         IEnumerator WaitForTrace(int traceNum)
